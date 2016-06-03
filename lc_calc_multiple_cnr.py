@@ -12,13 +12,13 @@ from glob import glob
 def calc_multiple_cnr(basedir, sublist):
 	for subj in sublist:
 		subjdir = os.path.join(basedir,subj)
-		globstr = os.path.join(subjdir,'*LC_FSE_T1_*.nii*')
+		globstr = os.path.join(subjdir,'LC_FSE.nii*')
 		infile = glob(globstr)
 		if len(infile) <> 1:
 			raise ValueError('Multiple image files found! %s' %infile)
 		else: 
 			infile = infile[0]
-		maskfile = os.path.join(subjdir, 'ROI.nii.gz')
+		maskfile = os.path.join(subjdir, 'LC_ROI.nii.gz')
 		lc_calc_cnr.cnr_to_file(infile, maskfile)
 
 if __name__ == '__main__':
