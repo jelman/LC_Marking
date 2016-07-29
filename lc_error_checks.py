@@ -12,7 +12,8 @@ import os, sys
 import nibabel as nib
 import numpy as np
 import logging
-
+sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
+from create_logger import create_logger
 
 def get_data(infile):
     """Load image and return data matrix"""
@@ -133,28 +134,7 @@ def run_error_checks(mask_file):
     return error_status
 
             
-def create_logger(outdir, name=None):
-    # create logger 
-    #logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    if not name:
-        name = 'error_checks.log'
-    logfile = os.path.join(outdir, name)
-    fh = logging.FileHandler(logfile)
-    fh.setLevel(logging.INFO)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-    return logger         
+     
     
 if __name__ == '__main__':
 
@@ -166,5 +146,5 @@ if __name__ == '__main__':
     else:
         mask_file = sys.argv[1]
         outdir = os.path.dirname(mask_file)
-        logger = create_logger(outdir)
+        logger = create_logger(outdir, name='error_checks.log')
         run_error_checks(mask_file)

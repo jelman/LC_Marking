@@ -11,31 +11,10 @@ import nibabel as nib
 import logging
 import logging.config
 sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
+from create_logger import create_logger
 import lc_error_checks
 
 
-def create_logger(outdir, name=None):
-    # create logger 
-    #logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    if not name:
-        name = 'calc_cnr.log'
-    logfile = os.path.join(outdir, name)
-    fh = logging.FileHandler(logfile)
-    fh.setLevel(logging.INFO)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-    return logger
 
 def make_outfile(root, name = 'LC_CNR.txt'):
     """ generate outfile string
@@ -89,7 +68,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     if (exists & force==False):
         print "{} exists, delete before running or use --force flag.".format(outfile)        
         return
-    logger = create_logger(outdir)
+    logger = create_logger(outdir, name='calc_cnr.log')
     logger.info("Image file: {}".format(infile))
     logger.info("Mask file: {}".format(mask_file))
     error_status = lc_error_checks.run_error_checks(mask_file)
