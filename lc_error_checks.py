@@ -117,7 +117,7 @@ def run_error_checks(mask_file):
     """
     logger = logging.getLogger(__name__)
     error_status = 0
-    logger.info('Begin running error checks on mask file')
+    logger.info("Begin running error checks on mask file {}".format(mask_file))
     mask_data = get_data(mask_file)
     x_roi1, y_roi1, z_roi1 = get_voxel_coords(mask_data, 1)
     x_roi2, y_roi2, z_roi2 = get_voxel_coords(mask_data, 2)
@@ -133,7 +133,28 @@ def run_error_checks(mask_file):
     return error_status
 
             
-         
+def create_logger(outdir, name=None):
+    # create logger 
+    #logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    if not name:
+        name = 'error_checks.log'
+    logfile = os.path.join(outdir, name)
+    fh = logging.FileHandler(logfile)
+    fh.setLevel(logging.INFO)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger         
     
 if __name__ == '__main__':
 
@@ -144,4 +165,6 @@ if __name__ == '__main__':
         print 'Rules defined in Clewett et al. (2016) NeuroImage paper'
     else:
         mask_file = sys.argv[1]
+        outdir = os.path.dirname(mask_file)
+        logger = create_logger(outdir)
         run_error_checks(mask_file)
