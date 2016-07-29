@@ -65,7 +65,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     if outdir==None:
         outdir, _ = os.path.split(infile)
     exists, outfile = make_outfile(outdir, 'LC_CNR.txt')
-    if (exists & force==False):
+    if (exists and force==False):
         print "{} exists, delete before running or use --force flag.".format(outfile)        
         return
     logger = create_logger(outdir, name='calc_cnr.log')
