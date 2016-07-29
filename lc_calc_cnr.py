@@ -64,7 +64,8 @@ def save_vals(outfile, LC_cnr, lLC_mean, rLC_mean, PT_mean):
 def cnr_to_file(infile, mask_file, outdir=None, force=False):
     if outdir==None:
         outdir, _ = os.path.split(infile)
-    exists, outfile = make_outfile(outdir, 'LC_CNR.txt')
+    fname = os.path.basename(mask_file).split('.')[0] + '.txt'
+    exists, outfile = make_outfile(outdir, fname)
     if (exists and force==False):
         print "{} exists, delete before running or use --force flag.".format(outfile)        
         return
