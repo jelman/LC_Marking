@@ -77,7 +77,9 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     LC_cnr = get_cnr(lLC_mean, rLC_mean, PT_mean)
     save_vals(outfile, LC_cnr, lLC_mean, rLC_mean, PT_mean)
     logger.info("Results saved to: {}".format(outfile))
-
+    for hndlr in logger.handlers[:]:
+        logger.removeHandler(hndlr)
+        hndlr.close()
 
 
 if __name__ == '__main__':
