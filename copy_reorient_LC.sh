@@ -20,7 +20,7 @@ for i in `find . -name "TSE2D*.nii"`;
 do
     nslices=$(fslhd $i | grep "^dim3" | awk '{print $2'})
 	if [ $nslices -ge 5 ] && [ $nslices -le 8 ]; then 
-		rsync -RtOvu $i /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data >> /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data/$copy_fname; 
+		rsync -RtOvu $i /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data >> /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data/logs/$copy_fname; 
 	fi
 done
 
