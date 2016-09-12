@@ -69,7 +69,8 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     if (exists and force==False):
         print "{} exists, delete before running or use --force flag.".format(outfile)        
         return
-    logger = create_logger(outdir, name='calc_cnr.log')
+    logname = 'calc_cnr_' + os.path.basename(mask_file).split('.')[0] + '.log'
+    logger = create_logger(outdir, name=logname)
     logger.info("Image file: {}".format(infile))
     logger.info("Mask file: {}".format(mask_file))
     error_status = lc_error_checks.run_error_checks(mask_file)
