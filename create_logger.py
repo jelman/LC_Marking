@@ -3,7 +3,7 @@ import os
 
 def create_logger(outdir, name=None):
     # create logger 
-    #logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages

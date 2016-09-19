@@ -5,18 +5,20 @@ extract and combine into a single spreadsheet.
 
 import os, sys
 import pandas as pd
+
 sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
 from glob import glob
 
 
 def cnr_from_file(basedir, subj):
     """ Extracts contrast values from a given subject in base directory """
-    subjdir = os.path.join(basedir,subj)
+    subjdir = os.path.join(basedir, subj)
     globstr = os.path.join(subjdir, 'LC_CNR.txt')
     lc_cnr_file = glob(globstr)[0]
     subj_cnr = pd.read_csv(lc_cnr_file, sep='\t', header=None, index_col=0, names=[subj])
     subj_cnr.index.name = None
     return subj_cnr.T
+
 
 def get_all_subjs(basedir, sublist):
     """ Iterates over all subjects to extract contrast estimates and append to a dataframe """
@@ -25,6 +27,7 @@ def get_all_subjs(basedir, sublist):
         subj_cnr = cnr_from_file(basedir, subj)
         all_subjs_cnr = all_subjs_cnr.append(subj_cnr)
     return all_subjs_cnr
+
 
 def all_cnr_to_file(basedir, sublist):
     """
@@ -35,8 +38,8 @@ def all_cnr_to_file(basedir, sublist):
     outfile = os.path.join(basedir, 'AllSubjectsCNR.csv')
     all_subjs_cnr.to_csv(outfile, index=True, index_label='vetsaid')
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         print 'Combines previously calculated CNR values into a spreadsheet.'

@@ -12,8 +12,10 @@ import os, sys
 import nibabel as nib
 import numpy as np
 import logging
+
 sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
 from create_logger import create_logger
+
 
 def get_data(infile):
     """Load image and return data matrix"""
@@ -23,10 +25,11 @@ def get_data(infile):
     logger.debug("Loaded {}".format(infile))
     return img_data
 
+
 def get_voxel_coords(dat, label):
     """Get voxel coordinates of a given ROI label"""
-    return np.where(dat==label)
- 
+    return np.where(dat == label)
+
 
 def check_lc_swapped(x_rightLC, x_leftLC):
     """
@@ -34,31 +37,32 @@ def check_lc_swapped(x_rightLC, x_leftLC):
     1 = Right LC
     2 = Left LC
     """
-    logger = logging.getLogger(__name__)    
+    logger = logging.getLogger(__name__)
     error_status = 0
     if all([all(x > x_leftLC) for x in x_rightLC]):
         error_status = 0
         logger.debug('Left and Right LC Labels OK')
         return error_status
     else:
-        error_status=1
+        error_status = 1
         logger.error('Left and Right LC ROIs are flipped!')
         return error_status
-    
+
+
 def pt_xaxis(x_rightLC, x_leftLC, x_PT):
     """
     Check PT placement along x-axis. The PT should be equidistant from left 
     and right LC ROIs. If there are an odd number of voxels, place PT one 
     voxel closer to the left LC ROI.
     """
-    logger = logging.getLogger(__name__)    
+    logger = logging.getLogger(__name__)
     error_status = 0
     gap_right = x_rightLC.min() - x_PT.max()
     gap_left = x_PT.min() - x_leftLC.max()
-    if (gap_left==gap_right):
+    if (gap_left == gap_right):
         logger.debug('PT x-axis is OK')
         return error_status
-    elif ((gap_right + gap_left) % 2 != 0) & (gap_left+1 == gap_right):
+    elif ((gap_right + gap_left) % 2 != 0) & (gap_left + 1 == gap_right):
         logger.debug('PT x-axis is OK')
         return error_status
     else:
@@ -66,14 +70,15 @@ def pt_xaxis(x_rightLC, x_leftLC, x_PT):
         error_status = 1
         return error_status
 
+
 def pt_yaxis(y_rightLC, y_leftLC, y_PT):
     """
     Check placement of PT along the y-axis. The boundary of the PT should 
     begin 6 voxels ventral from the center of the most ventral LC ROI.
     """
-    logger = logging.getLogger(__name__)    
+    logger = logging.getLogger(__name__)
     error_status = 0
-    ventralLC = int(max(np.median(y_rightLC), np.median(y_leftLC)))    
+    ventralLC = int(max(np.median(y_rightLC), np.median(y_leftLC)))
     if (y_PT.min() - ventralLC) == 6:
         logger.debug('PT y-axis is OK')
         return error_status
@@ -81,7 +86,8 @@ def pt_yaxis(y_rightLC, y_leftLC, y_PT):
         logger.error('PT is not 6 voxels ventral to most ventral LC!')
         error_status = 1
         return error_status
-        
+
+
 def check_nvoxels(mask_data):
     """
     Check the number of voxels in each ROI. 
@@ -89,24 +95,25 @@ def check_nvoxels(mask_data):
     Left LC = 5 voxels
     PT = 100 voxels
     """
-    logger = logging.getLogger(__name__)    
+    logger = logging.getLogger(__name__)
     error_status = 0
-    n_rightLC = np.sum(mask_data==1)
-    n_leftLC = np.sum(mask_data==2)
-    n_PT = np.sum(mask_data==3)
-    if (n_rightLC==5) & (n_leftLC==5) & (n_PT==100):
+    n_rightLC = np.sum(mask_data == 1)
+    n_leftLC = np.sum(mask_data == 2)
+    n_PT = np.sum(mask_data == 3)
+    if (n_rightLC == 5) & (n_leftLC == 5) & (n_PT == 100):
         logger.debug('Number of voxels in all ROIs is OK')
-        return error_status        
-    if n_rightLC!=5:
+        return error_status
+    if n_rightLC != 5:
         logger.error('Right LC ROI has incorrect number of voxels!')
-        error_status+=1
-    if n_leftLC!=5:
-        logger.error('Left LC ROI has incorrect number of voxels!')    
-        error_status+=1
-    if n_PT!=100:
-        error_status+=1
+        error_status += 1
+    if n_leftLC != 5:
+        logger.error('Left LC ROI has incorrect number of voxels!')
+        error_status += 1
+    if n_PT != 100:
+        error_status += 1
         logger.error('PT ROI has incorrect number of voxels!')
-    return error_status  
+    return error_status
+
 
 def run_error_checks(mask_file):
     """
@@ -122,22 +129,19 @@ def run_error_checks(mask_file):
     mask_data = get_data(mask_file)
     x_roi1, y_roi1, z_roi1 = get_voxel_coords(mask_data, 1)
     x_roi2, y_roi2, z_roi2 = get_voxel_coords(mask_data, 2)
-    x_roi3, y_roi3, z_roi3 = get_voxel_coords(mask_data, 3)    
+    x_roi3, y_roi3, z_roi3 = get_voxel_coords(mask_data, 3)
     error_status += check_lc_swapped(x_roi1, x_roi2)
     error_status += pt_xaxis(x_roi1, x_roi2, x_roi3)
     error_status += pt_yaxis(y_roi1, y_roi2, y_roi3)
     error_status += check_nvoxels(mask_data)
-    if error_status==0:
+    if error_status == 0:
         logger.info('No errors found in mask file')
     else:
         logger.error("{0} error(s) found, check {1}".format(error_status, mask_file))
     return error_status
 
-            
-     
-    
-if __name__ == '__main__':
 
+if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         print 'Check the specified LC marking file for errors'

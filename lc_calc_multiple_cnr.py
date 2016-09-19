@@ -10,22 +10,22 @@ from glob import glob
 
 
 def calc_multiple_cnr(basedir, mask_name, sublist):
-	for subj in sublist:
-		subjdir = os.path.join(basedir,subj)
-		globstr = os.path.join(subjdir,'LC_FSE.nii*')
-		infile = glob(globstr)
-		if len(infile) > 1:
-			raise ValueError('Multiple image files found! %s' %infile)
-		else: 
-			infile = infile[0]
-		mask_file = os.path.join(subjdir, mask_name)
-		if os.path.isfile(mask_file):
-			lc_calc_cnr.cnr_to_file(infile, mask_file)
-		else:
-			continue
+    for subj in sublist:
+        subjdir = os.path.join(basedir, subj)
+        globstr = os.path.join(subjdir, 'LC_FSE.nii*')
+        infile = glob(globstr)
+        if len(infile) > 1:
+            raise ValueError('Multiple image files found! %s' % infile)
+        else:
+            infile = infile[0]
+        mask_file = os.path.join(subjdir, mask_name)
+        if os.path.isfile(mask_file):
+            lc_calc_cnr.cnr_to_file(infile, mask_file)
+        else:
+            continue
+
 
 if __name__ == '__main__':
-
 
     if len(sys.argv) == 1:
         print 'Calculate CNR for a list of subjects.'
