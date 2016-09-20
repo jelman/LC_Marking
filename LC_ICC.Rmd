@@ -1,0 +1,39 @@
+---
+title: "Intra-rater reliability of LC marking"
+author: "Jeremy Elman"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+```{r include=FALSE}
+library(psych)
+library(dplyr)
+library(knitr)
+```
+
+# Locus coeruleus contrast-to-noise ratios
+```{r, include=FALSE}
+cnrfileAB = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_AB_All.csv")
+cnrfileJE = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_JE_All.csv")
+cnrfileOP = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_OP_All.csv")
+cnrfile_merged = merge(cnrfileAB[c("vetsaid","LC_CNR")], cnrfileJE[c("vetsaid","LC_CNR")], by="vetsaid", 
+                  suffixes = c("_AB","_JE"))
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileOP, vetsaid, LC_CNR_OP=LC_CNR), by="vetsaid")
+```
+
+
+```{r, echo=FALSE}
+kable(cnrfile_merged, digits=3)
+```
+
+# Intraclass Correllation Coefficients 
+
+```{r, cho=FALSE}
+ICC(dplyr::select(cnrfile_merged, -vetsaid))
+```
+
+
