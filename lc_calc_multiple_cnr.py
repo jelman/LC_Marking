@@ -10,7 +10,7 @@ import lc_calc_cnr
 from glob import glob
 
 
-def calc_multiple_cnr(basedir, mask_name, sublist):
+def calc_multiple_cnr(basedir, mask_name, sublist, force=False):
     for subj in sublist:
         subjdir = os.path.join(basedir, subj)
         globstr = os.path.join(subjdir, 'LC_FSE.nii*')
@@ -21,7 +21,7 @@ def calc_multiple_cnr(basedir, mask_name, sublist):
             infile = infile[0]
         mask_file = os.path.join(subjdir, mask_name)
         if os.path.isfile(mask_file):
-            lc_calc_cnr.cnr_to_file(infile, mask_file)
+            lc_calc_cnr.cnr_to_file(infile, mask_file, force=force)
         else:
             continue
 
