@@ -4,6 +4,7 @@ are saved out to a file in each subject's directory.
 """
 
 import os, sys
+import argparse
 sys.path.insert(0, '/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/code')
 import lc_calc_cnr
 from glob import glob
@@ -27,12 +28,19 @@ def calc_multiple_cnr(basedir, mask_name, sublist):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description="""This is a  script to calculate LC CNR for multiple subjects and save to file.""")
+    parser.add_argument('-d', '--basedir', type=str, required=True, 
+                        help='Base directory containing subject folders.')
+    parser.add_argument('-m', '--mask',required=True, type=str, 
+                        help='Mask file name. (File containing marked ROIs)')
+    parser.add_argument('-s','--subjects', nargs='+', required=True, 
+                        help='List of subject names')
+    parser.add_argument('-f','--force', action="store_true", default=False, 
+                        help='Force overwrite of existing results file (default = False)')
+  
     if len(sys.argv) == 1:
-        print 'Calculate CNR for a list of subjects.'
-        print 'USAGE: %s <base directory name> <mask name> <subject 1> <subject 2> ...' % os.path.basename(sys.argv[0])
-        print 'Outputs a csv file to base directory directory.'
+        parser.print_help()
     else:
-        basedir = sys.argv[1]
-        mask_name = sys.argv[2]
-        sublist = sys.argv[3:]
-        calc_multiple_cnr(basedir, mask_name, sublist)
+        args = parser.parse_args()
+        ### Begin running script ###
+        calc_multiple_cnr(args.basedir, args.mask, args.subjects, args.force)
