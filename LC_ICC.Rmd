@@ -13,15 +13,19 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 library(psych)
 library(dplyr)
 library(knitr)
+
 ```
 
 # Locus coeruleus contrast-to-noise ratios
 ```{r, include=FALSE}
+cnrfileConsensus = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_Consensus_All.csv")
 cnrfileAB = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_AB_All.csv")
 cnrfileJE = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_JE_All.csv")
 cnrfileOP = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_OP_All.csv")
-cnrfile_merged = merge(cnrfileAB[c("vetsaid","LC_CNR")], cnrfileJE[c("vetsaid","LC_CNR")], by="vetsaid", 
-                  suffixes = c("_AB","_JE"))
+
+cnrfile_merged = merge(cnrfileConsensus[c("vetsaid","LC_CNR")], cnrfileAB[c("vetsaid","LC_CNR")], by="vetsaid", 
+                  suffixes = c("_CONS","_AB"))
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileJE, vetsaid, LC_CNR_JE=LC_CNR), by="vetsaid")
 cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileOP, vetsaid, LC_CNR_OP=LC_CNR), by="vetsaid")
 ```
 
@@ -30,7 +34,10 @@ cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileOP, vetsaid, LC_CNR_
 kable(cnrfile_merged, digits=3)
 ```
 
+
+
 # Intraclass Correllation Coefficients 
+
 
 ```{r, cho=FALSE}
 ICC(dplyr::select(cnrfile_merged, -vetsaid))
