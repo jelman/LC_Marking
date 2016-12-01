@@ -13,7 +13,7 @@ from glob import glob
 def calc_multiple_cnr(basedir, mask_name, sublist, force=False):
     for subj in sublist:
         subjdir = os.path.join(basedir, subj)
-        globstr = os.path.join(subjdir, 'LC_FSE.nii*')
+        globstr = os.path.join(subjdir, 'LC_[FT]SE.nii*')
         infile = glob(globstr)
         if len(infile) > 1:
             raise ValueError('Multiple image files found! %s' % infile)
