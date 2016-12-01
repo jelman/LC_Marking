@@ -5,7 +5,7 @@ are saved out to a file in each subject's directory.
 
 import os, sys
 import argparse
-sys.path.insert(0, '/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/code')
+sys.path.insert(0, '/home/jelman/netshare/K/code/LC_Marking')
 import lc_calc_cnr
 from glob import glob
 
@@ -13,13 +13,18 @@ from glob import glob
 def calc_multiple_cnr(basedir, mask_name, sublist, force=False):
     for subj in sublist:
         subjdir = os.path.join(basedir, subj)
-        globstr = os.path.join(subjdir, 'LC_[FT]SE.nii*')
-        infile = glob(globstr)
+        infileglob = os.path.join(subjdir, 'LC_[FT]SE.nii*')
+        infile = glob(infileglob)
         if len(infile) > 1:
             raise ValueError('Multiple image files found! %s' % infile)
         else:
             infile = infile[0]
-        mask_file = os.path.join(subjdir, mask_name)
+        maskglob = os.path.join(subjdir, mask_name.split(".")[0] + ".nii*")
+        mask_file = glob(maskglob)
+        if len(mask_file) > 1:
+            raise ValueError('Multiple mask files found! %s' % mask_file)
+        else:
+            mask_file = mask_file[0]        
         if os.path.isfile(mask_file):
             lc_calc_cnr.cnr_to_file(infile, mask_file, force=force)
         else:
