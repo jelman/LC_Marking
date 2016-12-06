@@ -31,6 +31,16 @@ def get_voxel_coords(dat, label):
     return np.where(dat == label)
 
 
+def check_slice_nums(z1, z2, z3):
+    """
+    Check that all labels were marked on the same slices by testing z coords.
+    If so, then will return the slice numbers (0-indexed)
+    """
+    np.testing.assert_array_equal(np.unique(z1), np.unique(z2))
+    np.testing.assert_array_equal(np.unique(z1), np.unique(z3))
+    return np.unique(z1)        
+    
+    
 def check_lc_swapped(x_rightLC, x_leftLC):
     """
     Check if the LC ROI labels are swapped.  
@@ -88,7 +98,7 @@ def pt_yaxis(y_rightLC, y_leftLC, y_PT):
         return error_status
 
 
-def check_nvoxels(mask_data):
+def check_nvoxels(slice_data):
     """
     Check the number of voxels in each ROI. 
     Right LC = 5 voxels
@@ -97,9 +107,9 @@ def check_nvoxels(mask_data):
     """
     logger = logging.getLogger(__name__)
     error_status = 0
-    n_rightLC = np.sum(mask_data == 1)
-    n_leftLC = np.sum(mask_data == 2)
-    n_PT = np.sum(mask_data == 3)
+    n_rightLC = np.sum(slice_data == 1)
+    n_leftLC = np.sum(slice_data == 2)
+    n_PT = np.sum(slice_data == 3)
     if (n_rightLC == 5) & (n_leftLC == 5) & (n_PT == 100):
         logger.debug('Number of voxels in all ROIs is OK')
         return error_status
@@ -114,6 +124,13 @@ def check_nvoxels(mask_data):
         logger.error('PT ROI has incorrect number of voxels!')
     return error_status
 
+def check_slices(x_roi1, x_roi2, x_roi3, y_roi1, y_roi2, y_roi3, slice_data):
+    error_status = 0
+    error_status += check_lc_swapped(x_roi1, x_roi2)
+    error_status += pt_xaxis(x_roi1, x_roi2, x_roi3)
+    error_status += pt_yaxis(y_roi1, y_roi2, y_roi3)
+    error_status += check_nvoxels(slice_data)
+    return error_status
 
 def run_error_checks(mask_file):
     """
@@ -124,21 +141,35 @@ def run_error_checks(mask_file):
     4. Check if ROIs have the correct number of voxels
     """
     logger = logging.getLogger(__name__)
-    error_status = 0
+    mask_error_status = 0
     logger.info("Begin running error checks on mask file {}".format(mask_file))
     mask_data = get_data(mask_file)
-    x_roi1, y_roi1, z_roi1 = get_voxel_coords(mask_data, 1)
-    x_roi2, y_roi2, z_roi2 = get_voxel_coords(mask_data, 2)
-    x_roi3, y_roi3, z_roi3 = get_voxel_coords(mask_data, 3)
-    error_status += check_lc_swapped(x_roi1, x_roi2)
-    error_status += pt_xaxis(x_roi1, x_roi2, x_roi3)
-    error_status += pt_yaxis(y_roi1, y_roi2, y_roi3)
-    error_status += check_nvoxels(mask_data)
-    if error_status == 0:
-        logger.info('No errors found in mask file')
+    x_roi1_all, y_roi1_all, z_roi1_all = get_voxel_coords(mask_data, 1)
+    x_roi2_all, y_roi2_all, z_roi2_all = get_voxel_coords(mask_data, 2)
+    x_roi3_all, y_roi3_all, z_roi3_all = get_voxel_coords(mask_data, 3)
+    try:
+        slices = check_slice_nums(z_roi1_all, z_roi2_all, z_roi3_all)
+    except AssertionError:
+        mask_error_status = 1
+        logger.error("Labels not marked on same slices, check {0}".format(mask_file))
+        return mask_error_status
+    for slicenum in slices:
+        slice_error_status = 0
+        x_roi1, y_roi1 = x_roi1_all[z_roi1_all==slicenum], y_roi1_all[z_roi1_all==slicenum]
+        x_roi2, y_roi2 = x_roi2_all[z_roi2_all==slicenum], y_roi2_all[z_roi2_all==slicenum]
+        x_roi3, y_roi3 = x_roi3_all[z_roi3_all==slicenum], y_roi3_all[z_roi3_all==slicenum]
+        slice_data = mask_data[:,:,slicenum]
+        slice_error_status += check_slices(x_roi1, x_roi2, x_roi3, y_roi1, y_roi2, y_roi3, slice_data)
+        mask_error_status += slice_error_status
+        if slice_error_status == 0:
+            logger.info("No errors found in slice {0}".format(str(slicenum+1)))
+        else:
+            logger.error("{0} error(s) found, check slice {1}".format(slice_error_status, str(slicenum+1)))
+    if mask_error_status == 0:
+        logger.info("No errors found in {0}".format(mask_file))
     else:
-        logger.error("{0} error(s) found, check {1}".format(error_status, mask_file))
-    return error_status
+        logger.error("{0} error(s) found, check {1}".format(mask_error_status, mask_file))
+    return mask_error_status
 
 
 if __name__ == '__main__':

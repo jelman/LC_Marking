@@ -9,9 +9,10 @@ import argparse
 import os, sys
 import nibabel as nib
 import logging
-import logging.config
+import numpy as np
+import pandas as pd
 
-sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
+sys.path.insert(0, '/home/jelman/netshare/K/code/LC_Marking')
 from create_logger import create_logger
 import lc_error_checks
 
@@ -30,21 +31,35 @@ def make_outfile(root, name='LC_CNR.txt'):
 
 def get_roi_vals(infile, mask_file):
     """
-    Calculate locus coeruleus contrast ratio. Takes LC FSE image and mask file containing
-    ROIs of left LC (label=1), right LC (label=2), and pontine tegmentum (label=3). The
-    values of each LC ROI are averaged.
+    Gets average value within each ROI. Takes LC FSE image and mask file 
+    containing ROIs of left LC (label=1), right LC (label=2), and 
+    pontine tegmentum (label=3). Loops over slices to get separate values
+    for each slice and saves to dataframe.
     """
     # Load files
     img = nib.load(infile)
     img_data = img.get_data()
     mask = nib.load(mask_file)
     mask_data = mask.get_data()
-
+    slices = np.unique(np.where(mask_data <> 0)[2])
+    colnames = ['Left_LC','Right_LC','PT']
+    # Initialize dataframe to hold results
+    resultsdf = pd.DataFrame(index=slices, columns=colnames)
+    for slicenum in slices:
+        resultsdf.ix[slicenum,:] = get_slice_vals(img_data[:,:,slicenum], mask_data[:,:,slicenum])
+    return resultsdf
+    
+    
+def get_slice_vals(slice_data, slice_mask):
+    """
+    Takes data from one slice and gets values for each ROI. ROIs should be 
+    left LC (label=1), right LC (label=2), and pontine tegmentum (label=3).
+    """
     # Extract mean values from each ROI
-    lLC_mean = img_data[mask_data == 1].mean()
-    rLC_mean = img_data[mask_data == 2].mean()
-    PT_mean = img_data[mask_data == 3].mean()
-    return lLC_mean, rLC_mean, PT_mean
+    lLC_mean = slice_data[slice_mask == 1].mean()
+    rLC_mean = slice_data[slice_mask == 2].mean()
+    PT_mean = slice_data[slice_mask == 3].mean()
+    return [lLC_mean, rLC_mean, PT_mean]
 
 
 def get_cnr(lLC_mean, rLC_mean, PT_mean):
@@ -54,34 +69,35 @@ def get_cnr(lLC_mean, rLC_mean, PT_mean):
     return LC_cnr
 
 
-def save_vals(outfile, LC_cnr, lLC_mean, rLC_mean, PT_mean):
-    try:
-        with open(outfile, 'w') as f:
-            f.write("LC_CNR\t%s\n" % LC_cnr)
-            f.write("Left_LC\t%s\n" % lLC_mean)
-            f.write("Right_LC\t%s\n" % rLC_mean)
-            f.write("PT\t%s" % PT_mean)
-    except IOError:
-        print 'File could not be saved'
-
-
 def cnr_to_file(infile, mask_file, outdir=None, force=False):
     if outdir == None:
         outdir, _ = os.path.split(infile)
+    # Name outfile based on mask file
     fname = os.path.basename(mask_file).split('.')[0] + '.txt'
     exists, outfile = make_outfile(outdir, fname)
     if (exists and force == False):
         print "{} exists, delete before running or use --force flag.".format(outfile)
         return
+    # Create logger
     logname = 'calc_cnr_' + os.path.basename(mask_file).split('.')[0] + '.log'
     logger = create_logger(outdir, name=logname)
     logger.info("Image file: {}".format(infile))
     logger.info("Mask file: {}".format(mask_file))
+    # Run error checks
     error_status = lc_error_checks.run_error_checks(mask_file)
-    lLC_mean, rLC_mean, PT_mean = get_roi_vals(infile, mask_file)
-    LC_cnr = get_cnr(lLC_mean, rLC_mean, PT_mean)
-    save_vals(outfile, LC_cnr, lLC_mean, rLC_mean, PT_mean)
+    # Get ROI values put into dataframe
+    resultsdf = get_roi_vals(infile, mask_file)
+    # Change slices from 0-based index to 1-based
+    resultsdf.index = resultsdf.index + 1
+    # Calculate contrast to noise ratio
+    resultsdf['CNR'] = get_cnr(resultsdf['Left_LC'], resultsdf['Right_LC'], resultsdf['PT'])
+    # Save results to file
+    try:
+        resultsdf.to_csv(outfile, index_label="Slice", sep="\t")
+    except IOError:
+        print 'File could not be saved'
     logger.info("Results saved to: {}".format(outfile))
+    # Close log files
     for hndlr in logger.handlers[:]:
         logger.removeHandler(hndlr)
         hndlr.close()
@@ -107,3 +123,5 @@ if __name__ == '__main__':
             args.outdir, _ = os.path.split(args.infile)
         ### Begin running script ###
         cnr_to_file(args.infile, args.mask, args.outdir, args.force)
+
+### TODO: Adapt function to extract ROI values to three slices
