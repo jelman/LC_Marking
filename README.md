@@ -6,6 +6,15 @@ The images are T1 fast spin echo scans that increase the contrast of neuromelani
 
 where LC<sub>intensity</sub> is the averaged intensity of left and right LC ROIs and PT<sub>intensity</sub> is the intensity of the pontine tegmentum. 
 
+In the current implementation, 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices). 
+
+User scripts:
+--------------
+lc_calc_cnr.py: Calculate LC<sub>cnr</sub> for a single subject.
+lc_calc_multiple_cnr.py: Calculates LC<sub>cnr</sub> for multiple subjects in a batch.
+lc_gather_cnr.py: After LC<sub>cnr</sub>  has been claculated for all subjects, this script can be used to generate a single value per subject and gathers into a spreadsheet.
+
+---------------
 
 References:
 
