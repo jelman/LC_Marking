@@ -14,6 +14,7 @@ lc_calc_cnr.py: Calculate LC<sub>cnr</sub> for a single subject.
 lc_calc_multiple_cnr.py: Calculates LC<sub>cnr</sub> for multiple subjects in a batch.  
 lc_gather_cnr.py: After LC<sub>cnr</sub>  has been calculated for all subjects, this script can be used to generate a single value per subject and gathers into a spreadsheet.  
 
+
 ---------------
 
 References:
