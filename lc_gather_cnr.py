@@ -47,13 +47,13 @@ def get_all_subjs(cnrfile, dirlist, method):
     return all_subjs_cnr
 
 
-def all_cnr_to_file(outdir, cnrfile, dirlist, method):
+def all_cnr_to_file(indir, cnrfile, subjects, outfile, method):
     """
     Iterates through specified subject folders and extracts LC CNR estimates.
     Saves to csv in base directory.
     """
+    dirlist = [os.path.join(indir, subject) for subject in subjects]
     all_subjs_cnr = get_all_subjs(cnrfile, dirlist, method)
-    outfile = os.path.join(outdir, os.path.splitext(cnrfile)[0] + '_All.csv')
     all_subjs_cnr.to_csv(outfile, index=True, index_label='SubjectID')
 
 
@@ -64,12 +64,15 @@ if __name__ == '__main__':
     This is a  script to calculate LC CNR for multiple subjects and save to file. 
     The method to summarise CNR across the three marked slices can be specified.
     """)
-    parser.add_argument('outdir', type=str,  
-                        help='Directory to save files to.')
+
+    parser.add_argument('indir', type=str, 
+                        help='Directory containing subject folders')    
     parser.add_argument('cnrfile', type=str, 
                         help='File name pattern with LC CNR values')
-    parser.add_argument('subdirs', nargs='+',  
-                        help='List of subject directories')
+    parser.add_argument('subjects', nargs='+',  
+                        help='List of subject names')
+    parser.add_argument('-o', '--outfile', type=str, required=False, 
+                    help='Output filename. (default=<indir>/<cnrfile>_All.csv)')
     methodgroup = parser.add_mutually_exclusive_group()
     methodgroup.add_argument("--top2", action="store_const", dest="method", 
                              const="top2", default="top2",
@@ -84,7 +87,11 @@ if __name__ == '__main__':
         parser.print_help()
     else:
         args = parser.parse_args()
+        if args.outfile is None:
+            outfile = os.path.join(args.indir, os.path.splitext(args.cnrfile)[0]+"_All.csv")
+        else:
+            outfile = args.outfile
         ### Begin running script ###
-        all_cnr_to_file(args.outdir, args.cnrfile, args.subdirs, args.method)
+        all_cnr_to_file(args.indir, args.cnrfile, args.subjects, outfile, args.method)
 
 # TODO: check to see if script runs...
