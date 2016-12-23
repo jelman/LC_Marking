@@ -28,7 +28,11 @@ def summarise_cnr(subj_cnr_all, method='top2'):
     return summ.drop("Slice")       
 
 def cnr_from_file(subjdir, cnrfile, method):
-    """ Extracts contrast values from a given subject in base directory """
+    """ 
+    Extracts contrast values from a given subject in base directory. 
+    CNR file can be passed with or without file extension. 
+    """
+    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
     globstr = os.path.join(subjdir, cnrfile)
     lc_cnr_file = glob(globstr)[0]
     subj_cnr_all = pd.read_csv(lc_cnr_file, sep='\t')
