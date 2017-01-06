@@ -1,8 +1,8 @@
 """
-This script calculates neuromelanin contrast to noise ratio and saves to file. 
-The CNR is calculated (LC - PT) / PT, where LC is the average signal of left 
-and right LC, and PT is the pontine tegmentum. Individual ROI values, averaged 
-LC ROI value, and CNR value are saved to a text file. 
+This script calculates neuromelanin contrast to noise ratio and saves to file.
+The CNR is calculated (LC - PT) / PT, where LC is the average signal of left
+and right LC, and PT is the pontine tegmentum. Individual ROI values, averaged
+LC ROI value, and CNR value are saved to a text file.
 """
 
 import argparse
@@ -11,10 +11,8 @@ import nibabel as nib
 import logging
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, '/home/jelman/netshare/K/code/LC_Marking')
-from create_logger import create_logger
-import lc_error_checks
+from utils.create_logger import create_logger
+import utils.lc_error_checks
 
 
 def make_outfile(root, name='LC_CNR.txt'):
@@ -31,8 +29,8 @@ def make_outfile(root, name='LC_CNR.txt'):
 
 def get_roi_vals(infile, mask_file):
     """
-    Gets average value within each ROI. Takes LC FSE image and mask file 
-    containing ROIs of left LC (label=1), right LC (label=2), and 
+    Gets average value within each ROI. Takes LC FSE image and mask file
+    containing ROIs of left LC (label=1), right LC (label=2), and
     pontine tegmentum (label=3). Loops over slices to get separate values
     for each slice and saves to dataframe.
     """
@@ -48,11 +46,11 @@ def get_roi_vals(infile, mask_file):
     for slicenum in slices:
         resultsdf.ix[slicenum,:] = get_slice_vals(img_data[:,:,slicenum], mask_data[:,:,slicenum])
     return resultsdf
-    
-    
+
+
 def get_slice_vals(slice_data, slice_mask):
     """
-    Takes data from one slice and gets values for each ROI. ROIs should be 
+    Takes data from one slice and gets values for each ROI. ROIs should be
     left LC (label=1), right LC (label=2), and pontine tegmentum (label=3).
     """
     # Extract mean values from each ROI

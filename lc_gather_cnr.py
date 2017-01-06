@@ -6,17 +6,16 @@ extract and combine into a single spreadsheet.
 import os, sys
 import pandas as pd
 import argparse
-sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
 from glob import glob
 
 
 def summarise_cnr(subj_cnr_all, method='top2'):
-    """ 
+    """
     Summarize CNR for a subject.
     Methods
     --------------
         top2 :  Average of the top two slices (Default)
-        avg  :  Average of all three slices 
+        avg  :  Average of all three slices
         max  :  Maximum value from the three slices
     """
     if method=='top2':
@@ -25,12 +24,12 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         summ = subj_cnr_all.mean()
     elif method=='max':
         summ = subj_cnr_all.nlargest(1, 'CNR').mean()
-    return summ.drop("Slice")       
+    return summ.drop("Slice")
 
 def cnr_from_file(subjdir, cnrfile, method):
-    """ 
-    Extracts contrast values from a given subject in base directory. 
-    CNR file can be passed with or without file extension. 
+    """
+    Extracts contrast values from a given subject in base directory.
+    CNR file can be passed with or without file extension.
     """
     cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
     globstr = os.path.join(subjdir, cnrfile)
@@ -65,28 +64,28 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser(description="""
-    This is a  script to calculate LC CNR for multiple subjects and save to file. 
+    This is a  script to calculate LC CNR for multiple subjects and save to file.
     The method to summarise CNR across the three marked slices can be specified.
     """)
 
-    parser.add_argument('indir', type=str, 
-                        help='Directory containing subject folders')    
-    parser.add_argument('cnrfile', type=str, 
+    parser.add_argument('indir', type=str,
+                        help='Directory containing subject folders')
+    parser.add_argument('cnrfile', type=str,
                         help='File name pattern with LC CNR values')
-    parser.add_argument('subjects', nargs='+',  
+    parser.add_argument('subjects', nargs='+',
                         help='List of subject names')
-    parser.add_argument('-o', '--outfile', type=str, required=False, 
+    parser.add_argument('-o', '--outfile', type=str, required=False,
                     help='Output filename. (default=<indir>/<cnrfile>_All.csv)')
     methodgroup = parser.add_mutually_exclusive_group()
-    methodgroup.add_argument("--top2", action="store_const", dest="method", 
+    methodgroup.add_argument("--top2", action="store_const", dest="method",
                              const="top2", default="top2",
                              help='Average of top 2 CNR values (default)')
-    methodgroup.add_argument("--avg", action="store_const", dest="method", 
+    methodgroup.add_argument("--avg", action="store_const", dest="method",
                              const="avg", help='Average of all CNR values')
-    methodgroup.add_argument("--max", action="store_const", dest="method", 
+    methodgroup.add_argument("--max", action="store_const", dest="method",
                              const="max", help='Maxmimum CNR value only')
 
-  
+
     if len(sys.argv) == 1:
         parser.print_help()
     else:
