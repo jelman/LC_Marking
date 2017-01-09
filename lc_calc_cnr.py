@@ -12,7 +12,7 @@ import logging
 import numpy as np
 import pandas as pd
 from utils.create_logger import create_logger
-import utils.lc_error_checks
+from utils.lc_error_checks import run_error_checks
 
 
 def make_outfile(root, name='LC_CNR.txt'):
@@ -82,7 +82,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     logger.info("Image file: {}".format(infile))
     logger.info("Mask file: {}".format(mask_file))
     # Run error checks
-    error_status = lc_error_checks.run_error_checks(mask_file)
+    error_status = run_error_checks(mask_file)
     # Get ROI values put into dataframe
     resultsdf = get_roi_vals(infile, mask_file)
     # Change slices from 0-based index to 1-based
