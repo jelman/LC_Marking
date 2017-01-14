@@ -26,37 +26,35 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         summ = subj_cnr_all.nlargest(1, 'CNR').mean()
     return summ.drop("Slice")
 
-def cnr_from_file(subjdir, cnrfile, method):
+def cnr_from_file(cnr_file, method):
     """
     Extracts contrast values from a given subject in base directory.
     CNR file can be passed with or without file extension.
     """
-    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
-    globstr = os.path.join(subjdir, cnrfile)
-    lc_cnr_file = glob(globstr)[0]
-    subj_cnr_all = pd.read_csv(lc_cnr_file, sep='\t')
+    subj_cnr_all = pd.read_csv(cnr_file, sep='\t')
     subj_cnr = summarise_cnr(subj_cnr_all, method)
     return subj_cnr
 
-
-def get_all_subjs(cnrfile, dirlist, method):
-    """ Iterates over all subjects to extract contrast estimates and append to a dataframe """
+def get_all_subjs(filelist, method):
+    """ Iterates over all files to extract contrast estimates and append to a dataframe """
     all_subjs_cnr = pd.DataFrame()
-    for subjdir in dirlist:
-        subject = os.path.basename(subjdir)
-        subj_cnr = cnr_from_file(subjdir, cnrfile, method)
+    for subjfile in filelist:
+        subject = os.path.split(os.path.dirname(subjfile))[-1]
+        subj_cnr = cnr_from_file(subjfile, method)
         subj_cnr = pd.DataFrame(subj_cnr, columns=[subject]).T
         all_subjs_cnr = all_subjs_cnr.append(subj_cnr)
     return all_subjs_cnr
 
 
-def all_cnr_to_file(indir, cnrfile, subjects, outfile, method):
+def all_cnr_to_file(indir, cnrfile, outfile, method):
     """
-    Iterates through specified subject folders and extracts LC CNR estimates.
+    Searches through indir for cnrfiles and extracts LC CNR estimates.
     Saves to csv in base directory.
     """
-    dirlist = [os.path.join(indir, subject) for subject in subjects]
-    all_subjs_cnr = get_all_subjs(cnrfile, dirlist, method)
+    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
+    globstr = os.path.join(indir, '*/' + cnrfile)
+    filelist = glob(globstr)
+    all_subjs_cnr = get_all_subjs(filelist, method)
     all_subjs_cnr.to_csv(outfile, index=True, index_label='SubjectID')
 
 
@@ -72,8 +70,6 @@ if __name__ == '__main__':
                         help='Directory containing subject folders')
     parser.add_argument('cnrfile', type=str,
                         help='File name pattern with LC CNR values')
-    parser.add_argument('subjects', nargs='+',
-                        help='List of subject names')
     parser.add_argument('-o', '--outfile', type=str, required=False,
                     help='Output filename. (default=<indir>/<cnrfile>_All.csv)')
     methodgroup = parser.add_mutually_exclusive_group()
@@ -95,6 +91,6 @@ if __name__ == '__main__':
         else:
             outfile = args.outfile
         ### Begin running script ###
-        all_cnr_to_file(args.indir, args.cnrfile, args.subjects, outfile, args.method)
+        all_cnr_to_file(args.indir, args.cnrfile, outfile, args.method)
 
 # TODO: check to see if script runs...
