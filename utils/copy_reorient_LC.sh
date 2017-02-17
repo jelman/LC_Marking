@@ -15,6 +15,7 @@ PATH=/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/lib/fsl/5.0:/us
 copy_fname="copy_reorient_"`date +%F`".log"
 
 # Find all TSE files and check if they have 8 slices before copying over
+
 cd "/home/vetsatwinstudy/netshare/SYNVETSA/data/vetsa/VETSA3_FS53_DTI240/proc"
 for i in `find . -name "TSE2D*.mgz"`;
 do
