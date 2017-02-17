@@ -15,17 +15,17 @@ PATH=/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/lib/fsl/5.0
 copy_fname="copy_reorient_"`date +%F`".log"
 
 # Find all TSE files and check if they have 8 slices before copying over
-cd /home/vetsatwinstudy/netshare/VETSA_NAS/mdv/4/data/MMILDB/VETSA3/proc
+cd /home/vetsatwinstudy/netshare/SYNVETSA/data/vetsa/VETSA3_FS53_DTI240/proc
 for i in `find . -name "TSE2D*.nii"`;
 do
     nslices=$(fslhd $i | grep "^dim3" | awk '{print $2'})
 	if [ $nslices -ge 5 ] && [ $nslices -le 8 ]; then 
-		rsync -RtOvu $i /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data >> /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data/logs/$copy_fname; 
+		rsync -RtOvu $i "/home/vetsatwinstudy/netshare/M/PSYCH/KREMEN/VETSA 3 MRI/LC_Marking/data" >> "/home/vetsatwinstudy/netshare/M/PSYCH/KREMEN/VETSA 3 MRI/LC_Marking/data/logs/$copy_fname"; 
 	fi
 done
 
 # Reorient images to standard after checking that they do not already exist
-cd /home/vetsatwinstudy/netshare/VETSA_NAS/PROJ/LC_Marking/data
+cd "/home/vetsatwinstudy/netshare/M/PSYCH/KREMEN/VETSA 3 MRI/LC_Marking"
 for i in `find -name "TSE2D*.nii"`; 
 do 
 	if [ ! -f "`dirname $i`/LC_FSE.nii.gz" ]; then
