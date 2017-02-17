@@ -16,15 +16,18 @@ def calc_multiple_cnr(basedir, mask_name, sublist, force=False):
         infile = glob(infileglob)
         if len(infile) > 1:
             raise ValueError('Multiple image files found! %s' % infile)
+        elif len(infile) == 0:
+            continue
         else:
-            infile = infile[0]
+            infile = infile[0]        
         maskglob = os.path.join(subjdir, mask_name.split(".")[0] + ".nii*")
         mask_file = glob(maskglob)
         if len(mask_file) > 1:
             raise ValueError('Multiple mask files found! %s' % mask_file)
-        else:
+        elif len(mask_file) == 0:
+            continue
+        elif os.path.isfile(mask_file[0]):
             mask_file = mask_file[0]
-        if os.path.isfile(mask_file):
             lc_calc_cnr.cnr_to_file(infile, mask_file, force=force)
         else:
             continue
