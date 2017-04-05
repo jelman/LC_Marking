@@ -16,7 +16,7 @@ copy_fname="copy_reorient_"`date +%F`".log"
 
 # Find all TSE files and check if they have 8 slices before copying over
 
-cd "/home/vetsatwinstudy/netshare/SYNVETSA/data/vetsa/VETSA3_FS53_DTI240/proc"
+cd "/home/vetsatwinstudy/netshare/SYNVETSACOPY/data/vetsa/VETSA3_FS53_DTI240/proc"
 for i in `find . -name "TSE2D*.mgz"`;
 do
     nslices=$(mri_info $i --nslices)
