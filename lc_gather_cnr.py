@@ -14,9 +14,10 @@ def summarise_cnr(subj_cnr_all, method='top2'):
     Summarize CNR for a subject.
     Methods
     --------------
-        top2 :  Average of the top two slices (Default)
-        avg  :  Average of all three slices
-        max  :  Maximum value from the three slices
+        top2        :  Average of the top two slices (Default)
+        avg         :  Average of all three slices
+        max         :  Maximum value from the three slices
+        rostral2    :  Average of two most rostral slices
     """
     if method=='top2':
         summ = subj_cnr_all.nlargest(2, 'CNR').mean()
@@ -24,7 +25,10 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         summ = subj_cnr_all.mean()
     elif method=='max':
         summ = subj_cnr_all.nlargest(1, 'CNR').mean()
+    elif method=='rostral2':
+        subj_cnr_all.nsmallest(2, "Slice").mean()
     return summ.drop("Slice")
+
 
 def cnr_from_file(cnr_file, method):
     """
@@ -34,6 +38,7 @@ def cnr_from_file(cnr_file, method):
     subj_cnr_all = pd.read_csv(cnr_file, sep='\t')
     subj_cnr = summarise_cnr(subj_cnr_all, method)
     return subj_cnr
+
 
 def get_all_subjs(filelist, method):
     """ Iterates over all files to extract contrast estimates and append to a dataframe """
@@ -51,7 +56,7 @@ def all_cnr_to_file(indir, cnrfile, outfile, method):
     Searches through indir for cnrfiles and extracts LC CNR estimates.
     Saves to csv in base directory.
     """
-    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
+    cnrfile = os.path.splitext(cnrfile)[0] + '_' + method + '.txt'
     globstr = os.path.join(indir, '*/' + cnrfile)
     filelist = glob(globstr)
     all_subjs_cnr = get_all_subjs(filelist, method)
@@ -80,7 +85,8 @@ if __name__ == '__main__':
                              const="avg", help='Average of all CNR values')
     methodgroup.add_argument("--max", action="store_const", dest="method",
                              const="max", help='Maxmimum CNR value only')
-
+    methodgroup.add_argument("--rostral2", action="store_const", dest="method",
+                             const="rostral2", help='Average of the 2 most rostral slices')
 
     if len(sys.argv) == 1:
         parser.print_help()
