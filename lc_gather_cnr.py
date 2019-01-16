@@ -26,7 +26,7 @@ def summarise_cnr(subj_cnr_all, method='top2'):
     elif method=='max':
         summ = subj_cnr_all.nlargest(1, 'CNR').mean()
     elif method=='rostral2':
-        subj_cnr_all.nsmallest(2, "Slice").mean()
+        summ = subj_cnr_all.nsmallest(2, "Slice").mean()
     return summ.drop("Slice")
 
 
