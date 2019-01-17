@@ -56,7 +56,7 @@ def all_cnr_to_file(indir, cnrfile, outfile, method):
     Searches through indir for cnrfiles and extracts LC CNR estimates.
     Saves to csv in base directory.
     """
-    cnrfile = os.path.splitext(cnrfile)[0] + '_' + method + '.txt'
+    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
     globstr = os.path.join(indir, '*/' + cnrfile)
     filelist = glob(globstr)
     all_subjs_cnr = get_all_subjs(filelist, method)
@@ -93,7 +93,8 @@ if __name__ == '__main__':
     else:
         args = parser.parse_args()
         if args.outfile is None:
-            outfile = os.path.join(args.indir, os.path.splitext(args.cnrfile)[0]+"_All.csv")
+            outname = '_'.join([os.path.splitext(args.cnrfile)[0], args.method, "All.csv"])
+            outfile = os.path.join(args.indir, outname)
         else:
             outfile = args.outfile
         ### Begin running script ###
