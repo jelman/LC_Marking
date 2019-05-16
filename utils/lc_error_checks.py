@@ -12,8 +12,6 @@ import os, sys
 import nibabel as nib
 import numpy as np
 import logging
-
-sys.path.insert(0, '/home/jelman/netshare/K/Projects/LC_Marking/code')
 from create_logger import create_logger
 
 
