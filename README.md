@@ -6,7 +6,7 @@ The images are T1 fast spin echo scans that increase the contrast of neuromelani
 
 where LC<sub>intensity</sub> is the averaged intensity of left and right LC ROIs and PT<sub>intensity</sub> is the intensity of the pontine tegmentum. 
 
-In the current implementation, 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices). 
+In the current implementation, 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices). 
 
 User scripts:
 --------------
