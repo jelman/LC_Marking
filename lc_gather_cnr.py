@@ -18,6 +18,8 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         avg         :  Average of all three slices
         max         :  Maximum value from the three slices
         rostral2    :  Average of two most rostral slices
+        rostral1    :  Value of the single most rostral slice
+        middle      :  Value of middle slice
     """
     if method=='top2':
         summ = subj_cnr_all.nlargest(2, 'CNR').mean()
@@ -27,6 +29,11 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         summ = subj_cnr_all.nlargest(1, 'CNR').mean()
     elif method=='rostral2':
         summ = subj_cnr_all.nsmallest(2, "Slice").mean()
+    elif method=='rostral1':
+        summ = subj_cnr_all.nsmallest(1, "Slice").mean()
+    elif method=='middle':
+        summ = subj_cnr_all.iloc[1,:]
+        summ.name = None
     return summ.drop("Slice")
 
 
@@ -87,6 +94,10 @@ if __name__ == '__main__':
                              const="max", help='Maxmimum CNR value only')
     methodgroup.add_argument("--rostral2", action="store_const", dest="method",
                              const="rostral2", help='Average of the 2 most rostral slices')
+    methodgroup.add_argument("--rostral1", action="store_const", dest="method",
+                             const="rostral1", help='Value of the single most rostral slice')
+    methodgroup.add_argument("--middle", action="store_const", dest="method",
+                         const="middle", help='Value of the middle slice')
 
     if len(sys.argv) == 1:
         parser.print_help()
