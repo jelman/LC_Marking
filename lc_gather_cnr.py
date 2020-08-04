@@ -9,7 +9,7 @@ import argparse
 from glob import glob
 
 
-def summarise_cnr(subj_cnr_all, method='top2'):
+def summarise_cnr(subj_cnr_all, method='rostral2'):
     """
     Summarize CNR for a subject.
     Methods
@@ -20,6 +20,7 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         rostral2    :  Average of two most rostral slices
         rostral1    :  Value of the single most rostral slice
         middle      :  Value of middle slice
+        caudal1     :  Value of the single most caudal slice
     """
     if method=='top2':
         summ = subj_cnr_all.nlargest(2, 'CNR').mean()
@@ -33,7 +34,9 @@ def summarise_cnr(subj_cnr_all, method='top2'):
         summ = subj_cnr_all.nsmallest(1, "Slice").mean()
     elif method=='middle':
         summ = subj_cnr_all.iloc[1,:]
-        summ.name = None
+        summ.name = None    
+    elif method=='caudal1':
+        summ = subj_cnr_all.nlargest(1, "Slice").mean()
     return summ.drop("Slice")
 
 
@@ -86,18 +89,20 @@ if __name__ == '__main__':
                     help='Output filename. (default=<indir>/<cnrfile>_All.csv)')
     methodgroup = parser.add_mutually_exclusive_group()
     methodgroup.add_argument("--top2", action="store_const", dest="method",
-                             const="top2", default="top2",
-                             help='Average of top 2 CNR values (default)')
+                             const="top2", help='Average of top 2 CNR values (default)')
     methodgroup.add_argument("--avg", action="store_const", dest="method",
                              const="avg", help='Average of all CNR values')
     methodgroup.add_argument("--max", action="store_const", dest="method",
                              const="max", help='Maxmimum CNR value only')
     methodgroup.add_argument("--rostral2", action="store_const", dest="method",
-                             const="rostral2", help='Average of the 2 most rostral slices')
+                             const="rostral2", default="rostral2",
+                             help='Average of the 2 most rostral slices')
     methodgroup.add_argument("--rostral1", action="store_const", dest="method",
                              const="rostral1", help='Value of the single most rostral slice')
     methodgroup.add_argument("--middle", action="store_const", dest="method",
                          const="middle", help='Value of the middle slice')
+    methodgroup.add_argument("--caudal1", action="store_const", dest="method",
+                         const="caudal1", help='Value of the single most caudal slice')
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -111,4 +116,3 @@ if __name__ == '__main__':
         ### Begin running script ###
         all_cnr_to_file(args.indir, args.cnrfile, outfile, args.method)
 
-# TODO: check to see if script runs...
