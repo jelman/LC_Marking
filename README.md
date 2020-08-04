@@ -7,7 +7,7 @@ The images are T1 fast spin echo scans that increase the contrast of neuromelani
 where LC<sub>intensity</sub> is the averaged intensity of left and right LC ROIs and PT<sub>intensity</sub> is the intensity of the pontine tegmentum. 
 
 
-In the current implementation, 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, and middle slice). 
+In the current implementation uses a modified approach in which 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, and middle slice). Based on findings that signal in the rostral and middle sections of the LC are associated with age (Betts et al. 2017), Alzheimer's disease, and CSF amyloid (Betts et al, 2019), the rostral 2 method is currently recommended.
 
 
 User scripts:
@@ -21,8 +21,10 @@ lc_gather_cnr.py: After LC<sub>cnr</sub>  has been calculated for all subjects, 
 
 References:
 
-Clewett, D. V., Lee, T. H., Greening, S., Ponzio, A., Margalit, E., & Mather, M. (2016). Neuromelanin marks the spot: identifying a locus coeruleus biomarker of cognitive reserve in healthy aging. Neurobiology of aging, 37, 117-126.
+Betts MJ, Cardenas-Blanco A, Kanowski M, Jessen F, Duzel E (2017): In vivo MRI assessment of the human locus coeruleus along its rostrocaudal extent in young and older adults. Neuroimage. 163:150-159.
 
-Sasaki, M., Shibata, E., Tohyama, K., Takahashi, J., Otsuka, K., Tsuchiya, K., ... & Sakai, A. (2006). Neuromelanin magnetic resonance imaging of locus ceruleus and substantia nigra in Parkinson's disease. Neuroreport, 17(11), 1215-1218.
+Betts MJ, Cardenas-Blanco A, Kanowski M, Spottke A, Teipel SJ, Kilimann I, et al. (2019): Locus coeruleus MRI contrast is reduced in Alzheimer's disease dementia and correlates with CSF Abeta levels. Alzheimers Dement (Amst). 11:281-285.
 
+Clewett DV, Lee TH, Greening S, Ponzio A, Margalit E, Mather M (2016): Neuromelanin marks the spot: identifying a locus coeruleus biomarker of cognitive reserve in healthy aging. Neurobiol Aging. 37:117-126.
 
+Shibata E, Sasaki M, Tohyama K, Kanbara Y, Otsuka K, Ehara S, et al. (2006): Age-related changes in locus ceruleus on neuromelanin magnetic resonance imaging at 3 Tesla. Magnetic resonance in medical sciences : MRMS : an official journal of Japan Society of Magnetic Resonance in Medicine. 5:197-200.
