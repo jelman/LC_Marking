@@ -7,7 +7,7 @@ The images are T1 fast spin echo scans that increase the contrast of neuromelani
 where LC<sub>intensity</sub> is the averaged intensity of left and right LC ROIs and PT<sub>intensity</sub> is the intensity of the pontine tegmentum. 
 
 
-In the current implementation uses a modified approach in which 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, and middle slice). Based on findings that signal in the rostral and middle sections of the LC are associated with age (Betts et al. 2017), Alzheimer's disease, and CSF amyloid (Betts et al, 2019), the rostral 2 method is currently recommended.
+In the current implementation uses a modified approach in which 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, single most rostral slice, middle slice, and single most caudal slice). Based on findings that signal in the rostral and middle sections of the LC are associated with age (Betts et al. 2017), Alzheimer's disease, and CSF amyloid (Betts et al, 2019), the rostral 2 method is currently recommended.
 
 
 User scripts:
