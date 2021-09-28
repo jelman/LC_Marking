@@ -173,9 +173,9 @@ def run_error_checks(mask_file):
 if __name__ == '__main__':
 
     if len(sys.argv) == 1:
-        print 'Check the specified LC marking file for errors'
-        print 'USAGE: python %s <mask file>' % os.path.basename(sys.argv[0])
-        print 'Rules defined in Clewett et al. (2016) NeuroImage paper'
+        print('Check the specified LC marking file for errors')
+        print('USAGE: python %s <mask file>' % os.path.basename(sys.argv[0]))
+        print('Rules defined in Clewett et al. (2016) NeuroImage paper')
     else:
         mask_file = sys.argv[1]
         outdir = os.path.dirname(mask_file)

@@ -36,15 +36,15 @@ def get_roi_vals(infile, mask_file):
     """
     # Load files
     img = nib.load(infile)
-    img_data = img.get_data()
+    img_data = img.get_fdata()
     mask = nib.load(mask_file)
-    mask_data = mask.get_data()
-    slices = np.unique(np.where(mask_data <> 0)[2])
+    mask_data = mask.get_fdata()
+    slices = np.unique(np.where(mask_data != 0)[2])
     colnames = ['Left_LC','Right_LC','PT']
     # Initialize dataframe to hold results
     resultsdf = pd.DataFrame(index=slices, columns=colnames)
     for slicenum in slices:
-        resultsdf.ix[slicenum,:] = get_slice_vals(img_data[:,:,slicenum], mask_data[:,:,slicenum])
+        resultsdf.loc[slicenum,:] = get_slice_vals(img_data[:,:,slicenum], mask_data[:,:,slicenum])
     return resultsdf
 
 
@@ -74,7 +74,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     fname = os.path.basename(mask_file).split('.')[0] + '.txt'
     exists, outfile = make_outfile(outdir, fname)
     if (exists and force == False):
-        print "{} exists, delete before running or use --force flag.".format(outfile)
+        print("{} exists, delete before running or use --force flag.".format(outfile))
         return
     # Create logger
     logname = 'calc_cnr_' + os.path.basename(mask_file).split('.')[0] + '.log'
@@ -93,7 +93,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     try:
         resultsdf.to_csv(outfile, index_label="Slice", sep="\t")
     except IOError:
-        print 'File could not be saved'
+        print('File could not be saved')
     logger.info("Results saved to: {}".format(outfile))
     # Close log files
     for hndlr in logger.handlers[:]:
