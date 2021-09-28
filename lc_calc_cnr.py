@@ -90,7 +90,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     # Change slices from 0-based index to 1-based
     resultsdf.index = resultsdf.index + 1
     # Calculate contrast to noise ratio
-    resultsdf[['CNR', 'leftCNR', 'rightCNR']] = get_cnr(resultsdf['Left_LC'], resultsdf['Right_LC'], resultsdf['PT'])
+    resultsdf[['CNR', 'Left_CNR', 'Right_CNR']] = get_cnr(resultsdf['Left_LC'], resultsdf['Right_LC'], resultsdf['PT'])
     # Save results to file
     try:
         resultsdf.to_csv(outfile, index_label="Slice", sep="\t")
