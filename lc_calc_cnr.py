@@ -63,8 +63,10 @@ def get_slice_vals(slice_data, slice_mask):
 def get_cnr(lLC_mean, rLC_mean, PT_mean):
     """Calculate contrast ratio of locus coeruleus to pontine tegmentum"""
     LC_mean = (lLC_mean + rLC_mean) / 2
-    LC_cnr = (LC_mean - PT_mean) / PT_mean
-    return LC_cnr
+    mean_cnr = (LC_mean - PT_mean) / PT_mean
+    left_cnr = (lLC_mean - PT_mean) / PT_mean
+    right_cnr = (rLC_mean - PT_mean) / PT_mean
+    return pd.concat([mean_cnr, left_cnr, right_cnr], axis=1)
 
 
 def cnr_to_file(infile, mask_file, outdir=None, force=False):
@@ -88,7 +90,7 @@ def cnr_to_file(infile, mask_file, outdir=None, force=False):
     # Change slices from 0-based index to 1-based
     resultsdf.index = resultsdf.index + 1
     # Calculate contrast to noise ratio
-    resultsdf['CNR'] = get_cnr(resultsdf['Left_LC'], resultsdf['Right_LC'], resultsdf['PT'])
+    resultsdf[['CNR', 'leftCNR', 'rightCNR']] = get_cnr(resultsdf['Left_LC'], resultsdf['Right_LC'], resultsdf['PT'])
     # Save results to file
     try:
         resultsdf.to_csv(outfile, index_label="Slice", sep="\t")
