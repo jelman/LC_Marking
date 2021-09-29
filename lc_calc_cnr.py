@@ -51,11 +51,11 @@ def get_roi_vals(infile, mask_file):
 def get_slice_vals(slice_data, slice_mask):
     """
     Takes data from one slice and gets values for each ROI. ROIs should be
-    left LC (label=1), right LC (label=2), and pontine tegmentum (label=3).
+    right LC (label=1), left LC (label=2), and pontine tegmentum (label=3).
     """
     # Extract mean values from each ROI
-    lLC_mean = slice_data[slice_mask == 1].mean()
-    rLC_mean = slice_data[slice_mask == 2].mean()
+    rLC_mean = slice_data[slice_mask == 1].mean()
+    lLC_mean = slice_data[slice_mask == 2].mean()
     PT_mean = slice_data[slice_mask == 3].mean()
     return [lLC_mean, rLC_mean, PT_mean]
 
