@@ -19,7 +19,7 @@ def get_data(infile):
     """Load image and return data matrix"""
     logger = logging.getLogger(__name__)
     img = nib.load(infile)
-    img_data = img.get_data()
+    img_data = img.get_fdata()
     logger.debug("Loaded {}".format(infile))
     return img_data
 
