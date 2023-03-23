@@ -124,4 +124,4 @@ if __name__ == '__main__':
         ### Begin running script ###
         cnr_to_file(args.infile, args.mask, args.outdir, args.force)
 
-### TODO: Adapt function to extract ROI values to three slices
+
