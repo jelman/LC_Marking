@@ -1,13 +1,16 @@
 """
-After neuromelanin CNR is calculated and saved to file, this script helps
-extract and combine into a single spreadsheet.
+After neuromelanin CNR is calculated and saved to file for each subjects, this script helps
+extract and combine into a single spreadsheet. It will also produce a second spreadsheet with
+the absolute difference between calculated values from each rater for each subject. This 
+spreadsheet can be used to identify subjects with large differences for QC and will be named
+with the suffix "_diff" appended to the output file name.
 """
 
 import os, sys
 import pandas as pd
 import argparse
 from glob import glob
-
+from datetime import datetime
 
 def summarise_cnr(subj_cnr_all):
     """
@@ -52,27 +55,58 @@ def cnr_from_file(cnr_file):
     return subj_cnr
 
 
-def get_all_subjs(filelist):
-    """ Iterates over all files to extract contrast estimates and append to a dataframe """
+def get_all_subjs(indir):
+    """
+    This function takes a directory as input and returns two dataframes. The first dataframe contains the average CNR values for each subject
+    and the second dataframe contains the absolute difference between the two CNR values for each subject. If more than two CNR files are found
+    for a subject, a warning message is printed to the screen and appended to a log file.
+    """
+    tstamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_dir = os.path.join(indir, "logs")
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_file = os.path.join(log_dir, "lc_gather_cnr_{}.log".format(tstamp))
     all_subjs_cnr = pd.DataFrame()
-    for subjfile in filelist:
-        subject = os.path.split(os.path.dirname(subjfile))[-1]
-        subj_cnr = cnr_from_file(subjfile)
-        subj_cnr = pd.DataFrame(subj_cnr, columns=[subject]).T
-        all_subjs_cnr = all_subjs_cnr.append(subj_cnr)
-    return all_subjs_cnr
+    all_subjs_diff = pd.DataFrame()
+    dir_list = glob(os.path.join(indir, "MRIPROC_*"))
+    for folderpath in dir_list:
+        folder = os.path.split(folderpath)[-1]
+        if os.path.isdir(folderpath):
+            cnr_files = glob(os.path.join(folderpath, "LC_ROI_*.txt"))
+            if len(cnr_files) == 2:
+                cnr1 = cnr_from_file(cnr_files[0])
+                cnr2 = cnr_from_file(cnr_files[1])
+                cnr = pd.DataFrame([cnr1, cnr2]).mean()
+                diff = pd.DataFrame([cnr1, cnr2]).diff().abs().iloc[1]
+                cnr = pd.DataFrame(cnr, columns=[folder]).T
+                # Turn diff into a dataframe and transpose so that it is in the same format as cnr and folder is the index
+                diff = pd.DataFrame(diff).T
+                diff.index = [folder]
+                all_subjs_cnr = all_subjs_cnr.append(cnr)
+                all_subjs_diff = all_subjs_diff.append(diff)
+                print("Success: Extracted CNR from two files for subject {}".format(folder))
+                with open(log_file, "a") as f:
+                    f.write("Success: Extracted CNR from two files for subject {}\n".format(folder))
+            elif len(cnr_files) < 2:
+                print("Warning: less than two CNR files found for subject {}".format(folder))
+                with open(log_file, "a") as f:
+                    f.write("Warning: less than two CNR files found for subject {}\n".format(folder))
+            elif len(cnr_files) > 2:
+                print("Warning: more than two CNR files found for subject {}".format(folder))
+                with open(log_file, "a") as f:
+                    f.write("Warning: more than two CNR files found for subject {}\n".format(folder))
+    return all_subjs_cnr, all_subjs_diff
 
 
-def all_cnr_to_file(indir, cnrfile, outfile):
+def all_cnr_to_file(indir, outfile):
     """
     Searches through indir for cnrfiles and extracts LC CNR estimates.
     Saves to csv in base directory.
     """
-    cnrfile = os.path.splitext(cnrfile)[0] + '.txt'
-    globstr = os.path.join(indir, '*/' + cnrfile)
-    filelist = glob(globstr)
-    all_subjs_cnr = get_all_subjs(filelist)
+    all_subjs_cnr, all_subjs_diff = get_all_subjs(indir)
+    diff_outfile = ''.join([os.path.splitext(outfile)[0], "_diff", os.path.splitext(outfile)[1]])
     all_subjs_cnr.to_csv(outfile, index=True, index_label='SubjectID')
+    all_subjs_diff.to_csv(diff_outfile, index=True, index_label='SubjectID')
 
 
 if __name__ == '__main__':
@@ -96,10 +130,11 @@ if __name__ == '__main__':
     else:
         args = parser.parse_args()
         if args.outfile is None:
-            outname = '_'.join([os.path.splitext(args.cnrfile)[0], "All.csv"])
-            outfile = os.path.join(args.indir, outname)
+            outdir = os.path.join(os.path.split(args.indir)[0],"results")
+            outname = ''.join(["vetsa3_lc_cnr_", datetime.now().strftime("%Y-%m-%d"), ".csv"])
+            outfile = os.path.join(outdir, outname)
         else:
             outfile = args.outfile
         ### Begin running script ###
-        all_cnr_to_file(args.indir, args.cnrfile, outfile)
+        all_cnr_to_file(args.indir, outfile)
 
