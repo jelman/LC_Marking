@@ -113,16 +113,20 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser(description="""
-    This is a  script to calculate LC CNR for multiple subjects and save to file.
-    The method to summarise CNR across the three marked slices can be specified.
+    This is a  script to gather metrics calculated for each subject. Given a base input directory, tt will 
+    search all subject directories for CNR files. If it finds two files (i.e., from two raters), it will 
+    average values of each metric. Averaged values across all subjects will be saved to a csv file in the 
+    base directory, with the name <indir>/vetsa3_lc_cnr_[date].csv (unless otherwise specified). A second 
+    csv file will be saved with the absolute difference between the two raters for each metric to be used
+    for QC. Subjects that have less than or morethan two CNR files will be printed to the screen and appended 
+    to a log in <indir>/logs/. 
+    
     """)
 
     parser.add_argument('indir', type=str,
                         help='Directory containing subject folders')
-    parser.add_argument('cnrfile', type=str,
-                        help='File name pattern with LC CNR values')
     parser.add_argument('-o', '--outfile', type=str, required=False,
-                    help='Output filename. (default=<indir>/<cnrfile>_All.csv)')
+                    help='Output filename [optional]. (default=<indir>/vetsa3_lc_cnr_[date].csv)')
 
 
     if len(sys.argv) == 1:
