@@ -1,11 +1,14 @@
 """
 This script performs error checks on LC markings. It takes the LC mask and 
 tests the following rules:
-1. Label 1 = right LC, Label 2 = Right LC
+1. Label 1 = right LC, Label 2 = left LC
 2. PT is equidistant from each LC ROI (if odd number of slices, draw one voxel 
     closer to left LC ROI)
 3. PT begins 6 voxels ventral to the most ventral LC ROI
 4. LC ROIs contain 5 voxels, PT contains 100 voxels
+
+It will also check that 3 slices are marked, and that the same 3 slices are
+marked for each label.
 """
 
 import os, sys
@@ -29,6 +32,18 @@ def get_voxel_coords(dat, label):
     return np.where(dat == label)
 
 
+def check_nslices(z1, z2, z3):
+    """
+    Check that labels were marked on 3 slices testing that
+    the number of unique z coords equals 3.
+    If so, then will return the slice numbers (0-indexed)
+    """
+    assert len(np.unique(z1)) == 3
+    assert len(np.unique(z2)) == 3
+    assert len(np.unique(z3)) == 3
+    return np.unique(z1)        
+
+    
 def check_slice_nums(z1, z2, z3):
     """
     Check that all labels were marked on the same slices by testing z coords.
@@ -133,10 +148,12 @@ def check_slices(x_roi1, x_roi2, x_roi3, y_roi1, y_roi2, y_roi3, slice_data):
 def run_error_checks(mask_file):
     """
     Run all error checks:
-    1. Check if left and right LC labels are flipped
-    2. Check if PT is equidistant from each LC ROI
-    3. Check if PT begins 6 voxels ventral from center of most ventral LC ROI
-    4. Check if ROIs have the correct number of voxels
+    1. Check that labels are mark on 3 slices
+    2. Checked that same slices are marked for each label
+    3. Check if left and right LC labels are flipped
+    4. Check if PT is equidistant from each LC ROI
+    5. Check if PT begins 6 voxels ventral from center of most ventral LC ROI
+    6. Check if ROIs have the correct number of voxels
     """
     logger = logging.getLogger(__name__)
     mask_error_status = 0
@@ -145,6 +162,12 @@ def run_error_checks(mask_file):
     x_roi1_all, y_roi1_all, z_roi1_all = get_voxel_coords(mask_data, 1)
     x_roi2_all, y_roi2_all, z_roi2_all = get_voxel_coords(mask_data, 2)
     x_roi3_all, y_roi3_all, z_roi3_all = get_voxel_coords(mask_data, 3)
+    try:
+        nslices_ = check_nslices(z_roi1_all, z_roi2_all, z_roi3_all)
+    except AssertionError:
+        mask_error_status = 1
+        logger.error("Labels are not marked on 3 slices, check {0}".format(mask_file))
+        return mask_error_status
     try:
         slices = check_slice_nums(z_roi1_all, z_roi2_all, z_roi3_all)
     except AssertionError:
