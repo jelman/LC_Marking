@@ -116,7 +116,7 @@ if __name__ == '__main__':
     This is a  script to gather metrics calculated for each subject. Given a base input directory, tt will 
     search all subject directories for CNR files. If it finds two files (i.e., from two raters), it will 
     average values of each metric. Averaged values across all subjects will be saved to a csv file in the 
-    base directory, with the name <indir>/vetsa3_lc_cnr_[date].csv (unless otherwise specified). A second 
+    base directory, with the name <indir>/results/vetsa4_lc_cnr_[date].csv (unless otherwise specified). A second 
     csv file will be saved with the absolute difference between the two raters for each metric to be used
     for QC. Subjects that have less than or morethan two CNR files will be printed to the screen and appended 
     to a log in <indir>/logs/. 
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     parser.add_argument('indir', type=str,
                         help='Directory containing subject folders')
     parser.add_argument('-o', '--outfile', type=str, required=False,
-                    help='Output filename [optional]. (default=<indir>/vetsa3_lc_cnr_[date].csv)')
+                    help='Output filename [optional]. (default=<indir>/results/vetsa4_lc_cnr_[date].csv)')
 
 
     if len(sys.argv) == 1:
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         args = parser.parse_args()
         if args.outfile is None:
             outdir = os.path.join(os.path.split(args.indir)[0],"results")
-            outname = ''.join(["vetsa3_lc_cnr_", datetime.now().strftime("%Y-%m-%d"), ".csv"])
+            outname = ''.join(["vetsa4_lc_cnr_", datetime.now().strftime("%Y-%m-%d"), ".csv"])
             outfile = os.path.join(outdir, outname)
         else:
             outfile = args.outfile
