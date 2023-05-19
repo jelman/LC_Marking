@@ -66,9 +66,12 @@ def get_all_subjs(indir):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     log_file = os.path.join(log_dir, "lc_gather_cnr_{}.log".format(tstamp))
-    all_subjs_cnr = pd.DataFrame()
-    all_subjs_diff = pd.DataFrame()
+    # Initialize empty lists to hold results
+    all_subjs_cnr = list()
+    all_subjs_diff = list()
+    # Get list of folders
     dir_list = glob(os.path.join(indir, "MRIPROC_*"))
+    # Begin looping over all subject folders
     for folderpath in dir_list:
         folder = os.path.split(folderpath)[-1]
         if os.path.isdir(folderpath):
@@ -82,8 +85,9 @@ def get_all_subjs(indir):
                 # Turn diff into a dataframe and transpose so that it is in the same format as cnr and folder is the index
                 diff = pd.DataFrame(diff).T
                 diff.index = [folder]
-                all_subjs_cnr = all_subjs_cnr.append(cnr)
-                all_subjs_diff = all_subjs_diff.append(diff)
+                # Append to list of subject data
+                all_subjs_cnr.append(cnr)
+                all_subjs_diff.append(diff)
                 print("Success: Extracted CNR from two files for subject {}".format(folder))
                 with open(log_file, "a") as f:
                     f.write("Success: Extracted CNR from two files for subject {}\n".format(folder))
@@ -95,6 +99,9 @@ def get_all_subjs(indir):
                 print("Warning: more than two CNR files found for subject {}".format(folder))
                 with open(log_file, "a") as f:
                     f.write("Warning: more than two CNR files found for subject {}\n".format(folder))
+    # Concatenate data from all subjects
+    all_subjs_cnr = pd.conct(all_subjs_cnr)
+    all_subjs_diff = pd.concat(all_subjs_diff)
     return all_subjs_cnr, all_subjs_diff
 
 
