@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from utils.create_logger import create_logger
 from utils.lc_error_checks import run_error_checks
+from utils.load_img_data import get_data
 
 
 def make_outfile(root, name='LC_CNR.txt'):
@@ -35,10 +36,9 @@ def get_roi_vals(infile, mask_file):
     for each slice and saves to dataframe.
     """
     # Load files
-    img = nib.load(infile)
-    img_data = img.get_fdata()
-    mask = nib.load(mask_file)
-    mask_data = mask.get_fdata()
+    img_data = get_data(infile)
+    mask_data = get_data(mask_file)
+    # Get slices with labels
     slices = np.unique(np.where(mask_data != 0)[2])
     colnames = ['Left_LC','Right_LC','PT']
     # Initialize dataframe to hold results

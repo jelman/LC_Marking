@@ -16,15 +16,7 @@ import nibabel as nib
 import numpy as np
 import logging
 from utils.create_logger import create_logger
-
-
-def get_data(infile):
-    """Load image and return data matrix"""
-    logger = logging.getLogger(__name__)
-    img = nib.load(infile)
-    img_data = img.get_fdata()
-    logger.debug("Loaded {}".format(infile))
-    return img_data
+from utils.load_img_data import get_data 
 
 
 def get_voxel_coords(dat, label):
