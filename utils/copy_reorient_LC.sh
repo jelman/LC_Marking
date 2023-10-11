@@ -8,11 +8,6 @@
 # is newer than target.							#
 #################################################
 
-cwd=$PWD
-PATH=/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/lib/fsl/5.0:/usr/local/freesurfer/bin/
-. /etc/fsl/fsl.sh
-
-
 copy_fname="copy_reorient_"`date +%F`".log"
 
 # Find all TSE files and check if they have 8 slices before copying over
