@@ -18,6 +18,8 @@ In the current implementation uses a modified approach in which 3 contiguous sli
 
 A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, single most rostral slice, middle slice, and single most caudal slice). Based on findings that there is a rostral-caudal gradient of LC vulnerability (van Egroo et al., 2023), the rostral 2 method is currently recommended.
 
+These scripts additionally assume that two raters mark each image. The final CNR values are obtained by averaging across raters. For QC purposes, a file containing the differences in CNR values between raters will also be produced. This file can be checked for large discrepancies that may indicate an error in marking or need for harmonization in marking rules. 
+
 ## Usage
 
 The following packages:
@@ -48,6 +50,8 @@ python lc_gather_cnr.py /path/to/data/directory -o /path/to/output/file
 The subject list file should be a text file with one subject per line. The data directory should contain all subject folders. Each subject folder should contain the LC image and marking image for each subject. The output directory should be the folder where files contains LC<sub>cnr</sub> and individual ROI values will be written for each subject. This defaults to the subject folder. The output file will be a spreadsheet that will contain the gathered LC<sub>cnr</sub> values for all subjects.
 
 The scripts can be run with the -h flag to see a list of all options.
+
+*Note for internal VETSA use: The copy_reorient.sh script must be run to prior to marking. Raw dicom data is converted to mgz as part of the CMIG processing pipeline. The mgz files are copied to the VETSA NAS, converted to nifti, and reoriented to standard orientation. These re-oriented nifti files are used for marking. Paths are hard-coded, so ensure they are correct prior to use.*
 
 -------------------------------------------------
 ## References
