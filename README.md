@@ -1,11 +1,11 @@
 # Locus Coeruleus Contrast to Noise Ratio (LC<sub>cnr</sub>) Calculation
 
 ## Overview
-Code to check locus coeruleus (LC) markings for errors and calculate contrast to noise ratio (CNR). The methods are based on those described in:
+Code to check locus coeruleus (LC) markings for errors and calculate contrast to noise ratio (LC<sub>cnr</sub>). The methods are based on those described in:
 
 Elman, J. A., et al. (2021). "MRI-assessed locus coeruleus integrity is heritable and associated with multiple cognitive domains, mild cognitive impairment, and daytime dysfunction." Alzheimer's & Dementia: The Journal of the Alzheimer's Association 17(6): 1017-1025.
 
-The images are T1 fast spin echo scans that increase the contrast of neuromelanin, a substance present in high concentrations within the LC and substantia nigra compared to surrounding tissue (Shibata et al. 2006). Images are marked according to rules described in Clewett et al. (2016), and CNR is calculated as:
+The images are T1 fast spin echo scans that increase the contrast of neuromelanin, a substance present in high concentrations within the LC and substantia nigra compared to surrounding tissue (Shibata et al. 2006). Images are marked according to rules described in Elman et al. (2016), and are based on resules originally described in Clewett et al. (2016).  LC<sub>cnr</sub> is calculated as:
 
   LC<sub>cnr</sub> = (LC<sub>intensity</sub> - PT<sub>intensity</sub>) / PT<sub>intensity</sub>
 
@@ -58,9 +58,11 @@ The scripts can be run with the -h flag to see a list of all options.
 
 References:
 
-Clewett, D. V., et al. (2016). "Neuromelanin marks the spot: identifying a locus coeruleus biomarker of cognitive reserve in healthy aging." Neurobiol Aging 37: 117-126.
+Clewett, D. V., Lee, T. H., Greening, S., Ponzio, A., Margalit, E., & Mather, M. (2016). Neuromelanin marks the spot: identifying a locus coeruleus biomarker of cognitive reserve in healthy aging. Neurobiol Aging, 37, 117-126. doi:10.1016/j.neurobiolaging.2015.09.019
 
-Elman, J. A., et al. (2021). "MRI-assessed locus coeruleus integrity is heritable and associated with multiple cognitive domains, mild cognitive impairment, and daytime dysfunction." Alzheimer's & Dementia: The Journal of the Alzheimer's Association 17(6): 1017-1025.
+Elman, J. A., Puckett, O. K., Beck, A., Fennema-Notestine, C., Cross, L. K., Dale, A. M., Eglit, G. M. L., Eyler, L. T., Gillespie, N. A., Granholm, E. L., Gustavson, D. E., Hagler, D. J., Jr., Hatton, S. N., Hauger, R., Jak, A. J., Logue, M. W., McEvoy, L. K., McKenzie, R. E., Neale, M. C., Panizzon, M. S., Reynolds, C. A., Sanderson-Cimino, M., Toomey, R., Tu, X. M., Whitsel, N., Williams, M. E., Xian, H., Lyons, M. J., Franz, C. E., & Kremen, W. S. (2021). MRI-assessed locus coeruleus integrity is heritable and associated with multiple cognitive domains, mild cognitive impairment, and daytime dysfunction. Alzheimer's & Dementia: The Journal of the Alzheimer's Association, 17(6), 1017-1025. doi:10.1002/alz.12261
 
-Van Egroo, M., et al. (2023). "Ultra-high field imaging, plasma markers and autopsy data uncover a specific rostral locus coeruleus vulnerability to hyperphosphorylated tau." Molecular Psychiatry: 1-11.
+Shibata, E., Sasaki, M., Tohyama, K., Kanbara, Y., Otsuka, K., Ehara, S., & Sakai, A. (2006). Age-related changes in locus ceruleus on neuromelanin magnetic resonance imaging at 3 Tesla. Magn Reson Med Sci, 5(4), 197-200. 
+
+Van Egroo, M., Riphagen, J. M., Ashton, N. J., Janelidze, S., Sperling, R. A., Johnson, K. A., Yang, H. S., Bennett, D. A., Blennow, K., Hansson, O., Zetterberg, H., & Jacobs, H. I. L. (2023). Ultra-high field imaging, plasma markers and autopsy data uncover a specific rostral locus coeruleus vulnerability to hyperphosphorylated tau. Molecular Psychiatry, 1-11. doi:10.1038/s41380-023-02041-y
 
