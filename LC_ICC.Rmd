@@ -18,17 +18,20 @@ library(knitr)
 
 # Locus coeruleus contrast-to-noise ratios
 ```{r, include=FALSE}
-cnrfileConsensus = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_Consensus_All.csv")
-cnrfileAB = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_AB_All.csv")
-cnrfileEF = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_EF_All.csv")
-cnrfileJE = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_JE_All.csv")
-cnrfileOP = read.csv("/home/jelman/netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_OP_All.csv")
+home_dir = path.expand("~")
+cnrfileConsensus = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_Consensus_All.csv"))
+cnrfileKC = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_KC_All.csv"))
+cnrfileCP = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_CP_All.csv"))
+cnrfileOP = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_OP_All.csv"))
+cnrfileRT = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_RT_All.csv"))
+cnrfileKE = read.csv(file.path(home_dir,"netshare/VETSA_NAS/PROJ/LC_Marking/results/LC_ROI_KE_All.csv"))
 
-cnrfile_merged = merge(cnrfileConsensus[c("vetsaid","LC_CNR")], cnrfileAB[c("vetsaid","LC_CNR")], by="vetsaid", 
-                  suffixes = c("_CONS","_AB"))
-cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileEF, vetsaid, LC_CNR_EF=LC_CNR), by="vetsaid")
-cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileJE, vetsaid, LC_CNR_JE=LC_CNR), by="vetsaid")
-cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileOP, vetsaid, LC_CNR_OP=LC_CNR), by="vetsaid")
+cnrfile_merged = merge(cnrfileConsensus[c("vetsaid","LC_CNR")], cnrfileKC[c("vetsaid","CNR_rostral2")], by="vetsaid", 
+                  suffixes = c("_CONS","_KC"))
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileCP, vetsaid, LC_CNR_CP=CNR_rostral2), by="vetsaid")
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileOP, vetsaid, LC_CNR_OP=CNR_rostral2), by="vetsaid")
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileRT, vetsaid, LC_CNR_RT=CNR_rostral2), by="vetsaid")
+cnrfile_merged = merge(cnrfile_merged, dplyr::select(cnrfileKE, vetsaid, LC_CNR_KE=CNR_rostral2), by="vetsaid")
 ```
 
 
