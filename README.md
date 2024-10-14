@@ -11,26 +11,26 @@ The images are T1 fast spin echo scans that increase the contrast of neuromelani
 
 where LC<sub>intensity</sub> is the averaged intensity of left and right LC ROIs and PT<sub>intensity</sub> is the intensity of the pontine tegmentum. 
 
-In the current implementation uses a modified approach in which 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. The current scripts assume markings have been made using itksnap and saved to a nifti image. The following values should be used to mark each structure:
-- 1 = Right LC
-- 2 = Left LC
-- 3 = Pontine Tegmentum
+In the current implementation, a modified approach is used in which 3 contiguous slices are marked on the LC image, and LC<sub>cnr</sub> is calculated for each slice. The current scripts assume markings have been made using itksnap and saved to a nifti image. The following values should be used to mark each structure:
+
+* 1 = Right LC
+* 2 = Left LC
+* 3 = Pontine Tegmentum
 
 A per subject value can be summarized with multiple methods (e.g., maximum value only, average of all 3 slices, average of top 2 slices, average of rostral 2 slices, single most rostral slice, middle slice, and single most caudal slice). Based on findings that there is a rostral-caudal gradient of LC vulnerability (van Egroo et al., 2023), the rostral 2 method is currently recommended.
 
 These scripts additionally assume that two raters mark each image. The final CNR values are obtained by averaging across raters. For QC purposes, a file containing the differences in CNR values between raters will also be produced. This file can be checked for large discrepancies that may indicate an error in marking or need for harmonization in marking rules. 
 
 ## Usage
-
-The following packages:
+The following packages are required:
 - nibabel
 - numpy
 - pandas
 
 The code is organized into 3 main scripts:
-- lc_calc_cnr.py : Calculates LC<sub>cnr</sub> for a single subject.
-- lc_calc_multiple_cnr.py : Wraps lc_calc_cnr.py to calculate LC<sub>cnr</sub> for multiple subjects in a batch.
-- lc_gather_cnr.py : After LC<sub>cnr</sub>  has been calculated for all subjects, this script can be used to generate a single value per subject and gathers into a spreadsheet.
+- `lc_calc_cnr.py`: Calculates LC<sub>cnr</sub> for a single subject.
+- `lc_calc_multiple_cnr.py`: Wraps `lc_calc_cnr.py` to calculate LC<sub>cnr</sub> for multiple subjects in a batch.
+- `lc_gather_cnr.py`: After LC<sub>cnr</sub> has been calculated for all subjects, this script can be used to generate a single value per subject and gather them into a spreadsheet.
 
 The scripts are designed to be run from the command line. For example, to calculate LC<sub>cnr</sub> for a single subject, the following command can be used:
 ``` 
